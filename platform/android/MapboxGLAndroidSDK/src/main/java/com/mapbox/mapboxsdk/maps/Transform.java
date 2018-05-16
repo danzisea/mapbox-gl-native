@@ -45,15 +45,6 @@ final class Transform implements MapView.OnMapChangedListener {
     this.cameraChangeDispatcher = cameraChangeDispatcher;
   }
 
-  void initialise(@NonNull MapboxMap mapboxMap, @NonNull MapboxMapOptions options) {
-    CameraPosition position = options.getCamera();
-    if (position != null && !position.equals(CameraPosition.DEFAULT)) {
-      moveCamera(mapboxMap, CameraUpdateFactory.newCameraPosition(position), null);
-    }
-    setMinZoom(options.getMinZoomPreference());
-    setMaxZoom(options.getMaxZoomPreference());
-  }
-
   //
   // Camera API
   //

@@ -87,13 +87,15 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
   private boolean destroyed;
   private boolean hasSurface;
 
+  private MapSettings mapSettings;
   private UiSettings uiSettings;
+
   private CompassView compassView;
   private PointF focalPoint;
   private ImageView attrView;
   private AttributionClickListener attributionClickListener;
   private ImageView logoView;
-  private WidgetUpdater widgetUpdater;
+  private WidgetUpdater widgetUpdater; // TODO: 16/05/2018 cleanup widet updater reference
 
   private MapGestureDetector mapGestureDetector;
   private MapKeyListener mapKeyListener;
@@ -164,6 +166,8 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     uiSettings.initialiseProjection(proj);
     uiSettings.getFocalPointObservable().observe((LifecycleOwner) context, point -> this.focalPoint = point);
 
+    mapSettings = ViewModelProviders.of((FragmentActivity) context).get(MapSettings.class);
+
     LongSparseArray<Annotation> annotationsArray = new LongSparseArray<>();
     MarkerViewManager markerViewManager = new MarkerViewManager((ViewGroup) findViewById(R.id.markerViewContainer));
     IconManager iconManager = new IconManager(nativeMapView);
@@ -177,9 +181,10 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     Transform transform = new Transform(nativeMapView, annotationManager.getMarkerViewManager(),
       cameraChangeDispatcher);
 
-    mapboxMap = new MapboxMap(nativeMapView, transform, uiSettings, proj, registerTouchListener,
+    mapboxMap = new MapboxMap(nativeMapView, transform, uiSettings, mapSettings, proj, registerTouchListener,
       annotationManager, cameraChangeDispatcher);
 
+    mapboxMap.initialiseSettingsObservers(context);
     mapCallback.attachMapboxMap(mapboxMap);
 
     // user input
