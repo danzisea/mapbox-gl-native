@@ -171,8 +171,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineJoin;
 
@@ -191,10 +194,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineMiterLimit;
 
@@ -213,10 +217,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineRoundLimit;
 
@@ -236,8 +241,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineBlur;
 
@@ -265,8 +273,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineColor;
 #else
@@ -286,8 +297,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineColor;
 #endif
@@ -302,10 +316,7 @@ MGL_EXPORT
 /**
  Specifies the lengths of the alternating dashes and gaps that form the dash
  pattern. The lengths are later scaled by the line width. To convert a dash
- length to points, multiply the length by the current line width. Note that
- GeoJSON sources with `lineMetrics: true` specified won't render dashed lines to
- the expected scale. Also note that zoom-dependent expressions will be evaluated
- only at integer zoom levels.
+ length to points, multiply the length by the current line width.
  
  This property is measured in line widths.
  
@@ -354,8 +365,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineGapWidth;
 
@@ -383,8 +397,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineOffset;
 
@@ -407,8 +424,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineOpacity;
 
@@ -464,10 +484,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineTranslation;
 #else
@@ -490,10 +511,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineTranslation;
 #endif
@@ -553,8 +575,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *lineWidth;
 

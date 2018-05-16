@@ -425,8 +425,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconAnchor;
 
@@ -481,8 +484,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconImageName;
 
@@ -506,8 +512,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconOffset;
 #else
@@ -527,8 +536,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconOffset;
 #endif
@@ -575,10 +587,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconPadding;
 
@@ -630,8 +643,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconRotation;
 
@@ -693,8 +709,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconScale;
 
@@ -752,10 +771,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconTextFitPadding;
 #else
@@ -779,10 +799,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconTextFitPadding;
 #endif
@@ -874,10 +895,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *maximumTextAngle;
 
@@ -905,8 +927,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *maximumTextWidth;
 
@@ -984,10 +1009,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *symbolSpacing;
 
@@ -1012,8 +1038,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *text;
 
@@ -1080,8 +1109,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textAnchor;
 
@@ -1115,8 +1147,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textFontNames;
 
@@ -1144,8 +1179,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textFontSize;
 
@@ -1205,8 +1243,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textJustification;
 
@@ -1230,8 +1271,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textLetterSpacing;
 
@@ -1252,10 +1296,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textLineHeight;
 
@@ -1278,8 +1323,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textOffset;
 #else
@@ -1301,8 +1349,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textOffset;
 #endif
@@ -1349,10 +1400,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textPadding;
 
@@ -1404,8 +1456,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textRotation;
 
@@ -1463,8 +1518,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textTransform;
 
@@ -1488,8 +1546,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconColor;
 #else
@@ -1510,8 +1571,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconColor;
 #endif
@@ -1540,8 +1604,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconHaloBlur;
 
@@ -1570,8 +1637,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconHaloColor;
 #else
@@ -1592,8 +1662,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconHaloColor;
 #endif
@@ -1622,8 +1695,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconHaloWidth;
 
@@ -1649,8 +1725,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconOpacity;
 
@@ -1684,10 +1763,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconTranslation;
 #else
@@ -1713,10 +1793,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *iconTranslation;
 #endif
@@ -1779,8 +1860,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textColor;
 #else
@@ -1800,8 +1884,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textColor;
 #endif
@@ -1830,8 +1917,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textHaloBlur;
 
@@ -1859,8 +1949,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textHaloColor;
 #else
@@ -1880,8 +1973,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textHaloColor;
 #endif
@@ -1911,8 +2007,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textHaloWidth;
 
@@ -1938,8 +2037,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textOpacity;
 
@@ -1973,10 +2075,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textTranslation;
 #else
@@ -2002,10 +2105,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *textTranslation;
 #endif

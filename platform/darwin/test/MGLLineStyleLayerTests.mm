@@ -99,7 +99,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'miter'"];
         layer.lineJoin = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::style::LineJoinType> propertyValue = { mbgl::style::LineJoinType::Miter };
+        mbgl::style::PropertyValue<mbgl::style::LineJoinType> propertyValue = { mbgl::style::LineJoinType::Miter };
         XCTAssertEqual(rawLayer->getLineJoin(), propertyValue,
                        @"Setting lineJoin to a constant value expression should update line-join.");
         XCTAssertEqualObjects(layer.lineJoin, constantExpression,
@@ -126,6 +126,12 @@
                       @"Unsetting lineJoin should return line-join to the default value.");
         XCTAssertEqualObjects(layer.lineJoin, defaultExpression,
                               @"lineJoin should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineJoin = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineJoin = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // line-miter-limit
@@ -222,7 +228,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.lineBlur = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getLineBlur(), propertyValue,
                        @"Setting lineBlur to a constant value expression should update line-blur.");
         XCTAssertEqualObjects(layer.lineBlur, constantExpression,
@@ -243,37 +249,18 @@
         XCTAssertEqualObjects(layer.lineBlur, functionExpression,
                               @"lineBlur should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineBlur = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineBlur(), propertyValue,
-                       @"Setting lineBlur to a data expression should update line-blur.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineBlur, pedanticFunctionExpression,
-                              @"lineBlur should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineBlur = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineBlur(), propertyValue,
-                       @"Setting lineBlur to a camera-data expression should update line-blur.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineBlur, pedanticFunctionExpression,
-                              @"lineBlur should round-trip camera-data expressions.");
 
         layer.lineBlur = nil;
         XCTAssertTrue(rawLayer->getLineBlur().isUndefined(),
                       @"Unsetting lineBlur should return line-blur to the default value.");
         XCTAssertEqualObjects(layer.lineBlur, defaultExpression,
                               @"lineBlur should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineBlurTransition = transitionTest;
         auto toptions = rawLayer->getLineBlurTransition();
@@ -293,7 +280,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
         layer.lineColor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
         XCTAssertEqual(rawLayer->getLineColor(), propertyValue,
                        @"Setting lineColor to a constant value expression should update line-color.");
         XCTAssertEqualObjects(layer.lineColor, constantExpression,
@@ -314,37 +301,18 @@
         XCTAssertEqualObjects(layer.lineColor, functionExpression,
                               @"lineColor should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineColor = functionExpression;
-
-        mbgl::style::ExponentialStops<mbgl::Color> exponentialStops = { {{18, { 1, 0, 0, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<mbgl::Color> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineColor(), propertyValue,
-                       @"Setting lineColor to a data expression should update line-color.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineColor, pedanticFunctionExpression,
-                              @"lineColor should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineColor = functionExpression;
-
-        std::map<float, mbgl::Color> innerStops { {18, { 1, 0, 0, 1 }} };
-        mbgl::style::CompositeExponentialStops<mbgl::Color> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<mbgl::Color> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineColor(), propertyValue,
-                       @"Setting lineColor to a camera-data expression should update line-color.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineColor, pedanticFunctionExpression,
-                              @"lineColor should round-trip camera-data expressions.");
 
         layer.lineColor = nil;
         XCTAssertTrue(rawLayer->getLineColor().isUndefined(),
                       @"Unsetting lineColor should return line-color to the default value.");
         XCTAssertEqualObjects(layer.lineColor, defaultExpression,
                               @"lineColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineColorTransition = transitionTest;
         auto toptions = rawLayer->getLineColorTransition();
@@ -407,7 +375,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.lineGapWidth = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getLineGapWidth(), propertyValue,
                        @"Setting lineGapWidth to a constant value expression should update line-gap-width.");
         XCTAssertEqualObjects(layer.lineGapWidth, constantExpression,
@@ -428,37 +396,18 @@
         XCTAssertEqualObjects(layer.lineGapWidth, functionExpression,
                               @"lineGapWidth should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineGapWidth = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineGapWidth(), propertyValue,
-                       @"Setting lineGapWidth to a data expression should update line-gap-width.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineGapWidth, pedanticFunctionExpression,
-                              @"lineGapWidth should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineGapWidth = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineGapWidth(), propertyValue,
-                       @"Setting lineGapWidth to a camera-data expression should update line-gap-width.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineGapWidth, pedanticFunctionExpression,
-                              @"lineGapWidth should round-trip camera-data expressions.");
 
         layer.lineGapWidth = nil;
         XCTAssertTrue(rawLayer->getLineGapWidth().isUndefined(),
                       @"Unsetting lineGapWidth should return line-gap-width to the default value.");
         XCTAssertEqualObjects(layer.lineGapWidth, defaultExpression,
                               @"lineGapWidth should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineGapWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineGapWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineGapWidthTransition = transitionTest;
         auto toptions = rawLayer->getLineGapWidthTransition();
@@ -478,7 +427,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.lineOffset = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getLineOffset(), propertyValue,
                        @"Setting lineOffset to a constant value expression should update line-offset.");
         XCTAssertEqualObjects(layer.lineOffset, constantExpression,
@@ -499,37 +448,18 @@
         XCTAssertEqualObjects(layer.lineOffset, functionExpression,
                               @"lineOffset should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineOffset = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineOffset(), propertyValue,
-                       @"Setting lineOffset to a data expression should update line-offset.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineOffset, pedanticFunctionExpression,
-                              @"lineOffset should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineOffset = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineOffset(), propertyValue,
-                       @"Setting lineOffset to a camera-data expression should update line-offset.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineOffset, pedanticFunctionExpression,
-                              @"lineOffset should round-trip camera-data expressions.");
 
         layer.lineOffset = nil;
         XCTAssertTrue(rawLayer->getLineOffset().isUndefined(),
                       @"Unsetting lineOffset should return line-offset to the default value.");
         XCTAssertEqualObjects(layer.lineOffset, defaultExpression,
                               @"lineOffset should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineOffsetTransition = transitionTest;
         auto toptions = rawLayer->getLineOffsetTransition();
@@ -549,7 +479,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.lineOpacity = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getLineOpacity(), propertyValue,
                        @"Setting lineOpacity to a constant value expression should update line-opacity.");
         XCTAssertEqualObjects(layer.lineOpacity, constantExpression,
@@ -570,37 +500,18 @@
         XCTAssertEqualObjects(layer.lineOpacity, functionExpression,
                               @"lineOpacity should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineOpacity = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineOpacity(), propertyValue,
-                       @"Setting lineOpacity to a data expression should update line-opacity.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineOpacity, pedanticFunctionExpression,
-                              @"lineOpacity should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineOpacity = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineOpacity(), propertyValue,
-                       @"Setting lineOpacity to a camera-data expression should update line-opacity.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineOpacity, pedanticFunctionExpression,
-                              @"lineOpacity should round-trip camera-data expressions.");
 
         layer.lineOpacity = nil;
         XCTAssertTrue(rawLayer->getLineOpacity().isUndefined(),
                       @"Unsetting lineOpacity should return line-opacity to the default value.");
         XCTAssertEqualObjects(layer.lineOpacity, defaultExpression,
                               @"lineOpacity should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineOpacityTransition = transitionTest;
         auto toptions = rawLayer->getLineOpacityTransition();
@@ -764,7 +675,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.lineWidth = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getLineWidth(), propertyValue,
                        @"Setting lineWidth to a constant value expression should update line-width.");
         XCTAssertEqualObjects(layer.lineWidth, constantExpression,
@@ -785,37 +696,18 @@
         XCTAssertEqualObjects(layer.lineWidth, functionExpression,
                               @"lineWidth should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.lineWidth = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getLineWidth(), propertyValue,
-                       @"Setting lineWidth to a data expression should update line-width.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.lineWidth, pedanticFunctionExpression,
-                              @"lineWidth should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.lineWidth = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getLineWidth(), propertyValue,
-                       @"Setting lineWidth to a camera-data expression should update line-width.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.lineWidth, pedanticFunctionExpression,
-                              @"lineWidth should round-trip camera-data expressions.");
 
         layer.lineWidth = nil;
         XCTAssertTrue(rawLayer->getLineWidth().isUndefined(),
                       @"Unsetting lineWidth should return line-width to the default value.");
         XCTAssertEqualObjects(layer.lineWidth, defaultExpression,
                               @"lineWidth should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.lineWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.lineWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLLineLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.lineWidthTransition = transitionTest;
         auto toptions = rawLayer->getLineWidthTransition();

@@ -80,7 +80,7 @@ namespace mbgl {
 - (void)setFillExtrusionBase:(NSExpression *)fillExtrusionBase {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(fillExtrusionBase);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(fillExtrusionBase);
     self.rawLayer->setFillExtrusionBase(mbglValue);
 }
 
@@ -115,7 +115,7 @@ namespace mbgl {
 - (void)setFillExtrusionColor:(NSExpression *)fillExtrusionColor {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<mbgl::Color>>(fillExtrusionColor);
+    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::PropertyValue<mbgl::Color>>(fillExtrusionColor);
     self.rawLayer->setFillExtrusionColor(mbglValue);
 }
 
@@ -150,7 +150,7 @@ namespace mbgl {
 - (void)setFillExtrusionHeight:(NSExpression *)fillExtrusionHeight {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(fillExtrusionHeight);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(fillExtrusionHeight);
     self.rawLayer->setFillExtrusionHeight(mbglValue);
 }
 

@@ -110,10 +110,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
 
  This property corresponds to the <a
  href="https://www.mapbox.com/mapbox-gl-js/style-spec/#light-position"><code>position</code></a>
@@ -141,10 +142,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
 
  This property corresponds to the <a
  href="https://www.mapbox.com/mapbox-gl-js/style-spec/#light-color"><code>color</code></a>
@@ -164,10 +166,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
 
  This property corresponds to the <a
  href="https://www.mapbox.com/mapbox-gl-js/style-spec/#light-color"><code>color</code></a>
@@ -196,10 +199,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
 
  This property corresponds to the <a
  href="https://www.mapbox.com/mapbox-gl-js/style-spec/#light-intensity"><code>intensity</code></a>

@@ -109,7 +109,7 @@ namespace mbgl {
 - (void)setLineJoin:(NSExpression *)lineJoin {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *, mbgl::style::LineJoinType, MGLLineJoin>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<mbgl::style::LineJoinType>>(lineJoin);
+    auto mbglValue = MGLStyleValueTransformer<mbgl::style::LineJoinType, NSValue *, mbgl::style::LineJoinType, MGLLineJoin>().toPropertyValue<mbgl::style::PropertyValue<mbgl::style::LineJoinType>>(lineJoin);
     self.rawLayer->setLineJoin(mbglValue);
 }
 
@@ -162,7 +162,7 @@ namespace mbgl {
 - (void)setLineBlur:(NSExpression *)lineBlur {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(lineBlur);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(lineBlur);
     self.rawLayer->setLineBlur(mbglValue);
 }
 
@@ -197,7 +197,7 @@ namespace mbgl {
 - (void)setLineColor:(NSExpression *)lineColor {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<mbgl::Color>>(lineColor);
+    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::PropertyValue<mbgl::Color>>(lineColor);
     self.rawLayer->setLineColor(mbglValue);
 }
 
@@ -274,7 +274,7 @@ namespace mbgl {
 - (void)setLineGapWidth:(NSExpression *)lineGapWidth {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(lineGapWidth);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(lineGapWidth);
     self.rawLayer->setLineGapWidth(mbglValue);
 }
 
@@ -309,7 +309,7 @@ namespace mbgl {
 - (void)setLineOffset:(NSExpression *)lineOffset {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(lineOffset);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(lineOffset);
     self.rawLayer->setLineOffset(mbglValue);
 }
 
@@ -344,7 +344,7 @@ namespace mbgl {
 - (void)setLineOpacity:(NSExpression *)lineOpacity {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(lineOpacity);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(lineOpacity);
     self.rawLayer->setLineOpacity(mbglValue);
 }
 
@@ -481,7 +481,7 @@ namespace mbgl {
 - (void)setLineWidth:(NSExpression *)lineWidth {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(lineWidth);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(lineWidth);
     self.rawLayer->setLineWidth(mbglValue);
 }
 

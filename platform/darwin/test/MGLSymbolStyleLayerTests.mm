@@ -99,7 +99,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'bottom-right'"];
         layer.iconAnchor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::style::SymbolAnchorType> propertyValue = { mbgl::style::SymbolAnchorType::BottomRight };
+        mbgl::style::PropertyValue<mbgl::style::SymbolAnchorType> propertyValue = { mbgl::style::SymbolAnchorType::BottomRight };
         XCTAssertEqual(rawLayer->getIconAnchor(), propertyValue,
                        @"Setting iconAnchor to a constant value expression should update icon-anchor.");
         XCTAssertEqualObjects(layer.iconAnchor, constantExpression,
@@ -126,6 +126,12 @@
                       @"Unsetting iconAnchor should return icon-anchor to the default value.");
         XCTAssertEqualObjects(layer.iconAnchor, defaultExpression,
                               @"iconAnchor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconAnchor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconAnchor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-ignore-placement
@@ -179,7 +185,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'Icon Image'"];
         layer.iconImageName = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<std::string> propertyValue = { "Icon Image" };
+        mbgl::style::PropertyValue<std::string> propertyValue = { "Icon Image" };
         XCTAssertEqual(rawLayer->getIconImage(), propertyValue,
                        @"Setting iconImageName to a constant value expression should update icon-image.");
         XCTAssertEqualObjects(layer.iconImageName, constantExpression,
@@ -206,6 +212,12 @@
                       @"Unsetting iconImageName should return icon-image to the default value.");
         XCTAssertEqualObjects(layer.iconImageName, defaultExpression,
                               @"iconImageName should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconImageName = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconImageName = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-offset
@@ -222,7 +234,7 @@
 #endif
         ];
         layer.iconOffset = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<std::array<float, 2>> propertyValue = { { 1, 1 } };
+        mbgl::style::PropertyValue<std::array<float, 2>> propertyValue = { { 1, 1 } };
         XCTAssertEqual(rawLayer->getIconOffset(), propertyValue,
                        @"Setting iconOffset to a constant value expression should update icon-offset.");
         XCTAssertEqualObjects(layer.iconOffset, constantExpression,
@@ -243,37 +255,18 @@
         XCTAssertEqualObjects(layer.iconOffset, functionExpression,
                               @"iconOffset should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconOffset = functionExpression;
-
-        mbgl::style::ExponentialStops<std::array<float, 2>> exponentialStops = { {{18, { 1, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<std::array<float, 2>> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconOffset(), propertyValue,
-                       @"Setting iconOffset to a data expression should update icon-offset.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconOffset, pedanticFunctionExpression,
-                              @"iconOffset should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconOffset = functionExpression;
-
-        std::map<float, std::array<float, 2>> innerStops { {18, { 1, 1 }} };
-        mbgl::style::CompositeExponentialStops<std::array<float, 2>> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<std::array<float, 2>> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconOffset(), propertyValue,
-                       @"Setting iconOffset to a camera-data expression should update icon-offset.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconOffset, pedanticFunctionExpression,
-                              @"iconOffset should round-trip camera-data expressions.");
 
         layer.iconOffset = nil;
         XCTAssertTrue(rawLayer->getIconOffset().isUndefined(),
                       @"Unsetting iconOffset should return icon-offset to the default value.");
         XCTAssertEqualObjects(layer.iconOffset, defaultExpression,
                               @"iconOffset should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-optional
@@ -413,7 +406,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.iconRotation = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getIconRotate(), propertyValue,
                        @"Setting iconRotation to a constant value expression should update icon-rotate.");
         XCTAssertEqualObjects(layer.iconRotation, constantExpression,
@@ -434,37 +427,18 @@
         XCTAssertEqualObjects(layer.iconRotation, functionExpression,
                               @"iconRotation should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconRotation = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconRotate(), propertyValue,
-                       @"Setting iconRotation to a data expression should update icon-rotate.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconRotation, pedanticFunctionExpression,
-                              @"iconRotation should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconRotation = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconRotate(), propertyValue,
-                       @"Setting iconRotation to a camera-data expression should update icon-rotate.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconRotation, pedanticFunctionExpression,
-                              @"iconRotation should round-trip camera-data expressions.");
 
         layer.iconRotation = nil;
         XCTAssertTrue(rawLayer->getIconRotate().isUndefined(),
                       @"Unsetting iconRotation should return icon-rotate to the default value.");
         XCTAssertEqualObjects(layer.iconRotation, defaultExpression,
                               @"iconRotation should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconRotation = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconRotation = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-rotation-alignment
@@ -518,7 +492,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.iconScale = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getIconSize(), propertyValue,
                        @"Setting iconScale to a constant value expression should update icon-size.");
         XCTAssertEqualObjects(layer.iconScale, constantExpression,
@@ -539,37 +513,18 @@
         XCTAssertEqualObjects(layer.iconScale, functionExpression,
                               @"iconScale should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconScale = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconSize(), propertyValue,
-                       @"Setting iconScale to a data expression should update icon-size.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconScale, pedanticFunctionExpression,
-                              @"iconScale should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconScale = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconSize(), propertyValue,
-                       @"Setting iconScale to a camera-data expression should update icon-size.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconScale, pedanticFunctionExpression,
-                              @"iconScale should round-trip camera-data expressions.");
 
         layer.iconScale = nil;
         XCTAssertTrue(rawLayer->getIconSize().isUndefined(),
                       @"Unsetting iconScale should return icon-size to the default value.");
         XCTAssertEqualObjects(layer.iconScale, defaultExpression,
                               @"iconScale should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconScale = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconScale = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-text-fit
@@ -801,7 +756,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.maximumTextWidth = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextMaxWidth(), propertyValue,
                        @"Setting maximumTextWidth to a constant value expression should update text-max-width.");
         XCTAssertEqualObjects(layer.maximumTextWidth, constantExpression,
@@ -822,37 +777,18 @@
         XCTAssertEqualObjects(layer.maximumTextWidth, functionExpression,
                               @"maximumTextWidth should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.maximumTextWidth = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextMaxWidth(), propertyValue,
-                       @"Setting maximumTextWidth to a data expression should update text-max-width.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.maximumTextWidth, pedanticFunctionExpression,
-                              @"maximumTextWidth should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.maximumTextWidth = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextMaxWidth(), propertyValue,
-                       @"Setting maximumTextWidth to a camera-data expression should update text-max-width.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.maximumTextWidth, pedanticFunctionExpression,
-                              @"maximumTextWidth should round-trip camera-data expressions.");
 
         layer.maximumTextWidth = nil;
         XCTAssertTrue(rawLayer->getTextMaxWidth().isUndefined(),
                       @"Unsetting maximumTextWidth should return text-max-width to the default value.");
         XCTAssertEqualObjects(layer.maximumTextWidth, defaultExpression,
                               @"maximumTextWidth should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.maximumTextWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.maximumTextWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // symbol-avoid-edges
@@ -992,7 +928,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'Text Field'"];
         layer.text = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<std::string> propertyValue = { "Text Field" };
+        mbgl::style::PropertyValue<std::string> propertyValue = { "Text Field" };
         XCTAssertEqual(rawLayer->getTextField(), propertyValue,
                        @"Setting text to a constant value expression should update text-field.");
         XCTAssertEqualObjects(layer.text, constantExpression,
@@ -1019,6 +955,12 @@
                       @"Unsetting text should return text-field to the default value.");
         XCTAssertEqualObjects(layer.text, defaultExpression,
                               @"text should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.text = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.text = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-allow-overlap
@@ -1072,7 +1014,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'bottom-right'"];
         layer.textAnchor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::style::SymbolAnchorType> propertyValue = { mbgl::style::SymbolAnchorType::BottomRight };
+        mbgl::style::PropertyValue<mbgl::style::SymbolAnchorType> propertyValue = { mbgl::style::SymbolAnchorType::BottomRight };
         XCTAssertEqual(rawLayer->getTextAnchor(), propertyValue,
                        @"Setting textAnchor to a constant value expression should update text-anchor.");
         XCTAssertEqualObjects(layer.textAnchor, constantExpression,
@@ -1099,6 +1041,12 @@
                       @"Unsetting textAnchor should return text-anchor to the default value.");
         XCTAssertEqualObjects(layer.textAnchor, defaultExpression,
                               @"textAnchor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textAnchor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textAnchor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-font
@@ -1109,7 +1057,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"{'Text Font', 'Tnof Txet'}"];
         layer.textFontNames = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<std::vector<std::string>> propertyValue = { { "Text Font", "Tnof Txet" } };
+        mbgl::style::PropertyValue<std::vector<std::string>> propertyValue = { { "Text Font", "Tnof Txet" } };
         XCTAssertEqual(rawLayer->getTextFont(), propertyValue,
                        @"Setting textFontNames to a constant value expression should update text-font.");
         XCTAssertEqualObjects(layer.textFontNames, constantExpression,
@@ -1136,6 +1084,12 @@
                       @"Unsetting textFontNames should return text-font to the default value.");
         XCTAssertEqualObjects(layer.textFontNames, defaultExpression,
                               @"textFontNames should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textFontNames = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textFontNames = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-size
@@ -1146,7 +1100,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textFontSize = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextSize(), propertyValue,
                        @"Setting textFontSize to a constant value expression should update text-size.");
         XCTAssertEqualObjects(layer.textFontSize, constantExpression,
@@ -1167,37 +1121,18 @@
         XCTAssertEqualObjects(layer.textFontSize, functionExpression,
                               @"textFontSize should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textFontSize = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextSize(), propertyValue,
-                       @"Setting textFontSize to a data expression should update text-size.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textFontSize, pedanticFunctionExpression,
-                              @"textFontSize should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textFontSize = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextSize(), propertyValue,
-                       @"Setting textFontSize to a camera-data expression should update text-size.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textFontSize, pedanticFunctionExpression,
-                              @"textFontSize should round-trip camera-data expressions.");
 
         layer.textFontSize = nil;
         XCTAssertTrue(rawLayer->getTextSize().isUndefined(),
                       @"Unsetting textFontSize should return text-size to the default value.");
         XCTAssertEqualObjects(layer.textFontSize, defaultExpression,
                               @"textFontSize should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textFontSize = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textFontSize = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-ignore-placement
@@ -1251,7 +1186,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'right'"];
         layer.textJustification = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::style::TextJustifyType> propertyValue = { mbgl::style::TextJustifyType::Right };
+        mbgl::style::PropertyValue<mbgl::style::TextJustifyType> propertyValue = { mbgl::style::TextJustifyType::Right };
         XCTAssertEqual(rawLayer->getTextJustify(), propertyValue,
                        @"Setting textJustification to a constant value expression should update text-justify.");
         XCTAssertEqualObjects(layer.textJustification, constantExpression,
@@ -1278,6 +1213,12 @@
                       @"Unsetting textJustification should return text-justify to the default value.");
         XCTAssertEqualObjects(layer.textJustification, defaultExpression,
                               @"textJustification should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textJustification = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textJustification = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-letter-spacing
@@ -1288,7 +1229,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textLetterSpacing = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextLetterSpacing(), propertyValue,
                        @"Setting textLetterSpacing to a constant value expression should update text-letter-spacing.");
         XCTAssertEqualObjects(layer.textLetterSpacing, constantExpression,
@@ -1309,37 +1250,18 @@
         XCTAssertEqualObjects(layer.textLetterSpacing, functionExpression,
                               @"textLetterSpacing should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textLetterSpacing = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextLetterSpacing(), propertyValue,
-                       @"Setting textLetterSpacing to a data expression should update text-letter-spacing.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textLetterSpacing, pedanticFunctionExpression,
-                              @"textLetterSpacing should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textLetterSpacing = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextLetterSpacing(), propertyValue,
-                       @"Setting textLetterSpacing to a camera-data expression should update text-letter-spacing.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textLetterSpacing, pedanticFunctionExpression,
-                              @"textLetterSpacing should round-trip camera-data expressions.");
 
         layer.textLetterSpacing = nil;
         XCTAssertTrue(rawLayer->getTextLetterSpacing().isUndefined(),
                       @"Unsetting textLetterSpacing should return text-letter-spacing to the default value.");
         XCTAssertEqualObjects(layer.textLetterSpacing, defaultExpression,
                               @"textLetterSpacing should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textLetterSpacing = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textLetterSpacing = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-line-height
@@ -1399,7 +1321,7 @@
 #endif
         ];
         layer.textOffset = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<std::array<float, 2>> propertyValue = { { 1, 1 } };
+        mbgl::style::PropertyValue<std::array<float, 2>> propertyValue = { { 1, 1 } };
         XCTAssertEqual(rawLayer->getTextOffset(), propertyValue,
                        @"Setting textOffset to a constant value expression should update text-offset.");
         XCTAssertEqualObjects(layer.textOffset, constantExpression,
@@ -1420,37 +1342,18 @@
         XCTAssertEqualObjects(layer.textOffset, functionExpression,
                               @"textOffset should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textOffset = functionExpression;
-
-        mbgl::style::ExponentialStops<std::array<float, 2>> exponentialStops = { {{18, { 1, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<std::array<float, 2>> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextOffset(), propertyValue,
-                       @"Setting textOffset to a data expression should update text-offset.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textOffset, pedanticFunctionExpression,
-                              @"textOffset should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textOffset = functionExpression;
-
-        std::map<float, std::array<float, 2>> innerStops { {18, { 1, 1 }} };
-        mbgl::style::CompositeExponentialStops<std::array<float, 2>> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<std::array<float, 2>> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextOffset(), propertyValue,
-                       @"Setting textOffset to a camera-data expression should update text-offset.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textOffset, pedanticFunctionExpression,
-                              @"textOffset should round-trip camera-data expressions.");
 
         layer.textOffset = nil;
         XCTAssertTrue(rawLayer->getTextOffset().isUndefined(),
                       @"Unsetting textOffset should return text-offset to the default value.");
         XCTAssertEqualObjects(layer.textOffset, defaultExpression,
                               @"textOffset should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textOffset = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-optional
@@ -1590,7 +1493,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textRotation = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextRotate(), propertyValue,
                        @"Setting textRotation to a constant value expression should update text-rotate.");
         XCTAssertEqualObjects(layer.textRotation, constantExpression,
@@ -1611,37 +1514,18 @@
         XCTAssertEqualObjects(layer.textRotation, functionExpression,
                               @"textRotation should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textRotation = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextRotate(), propertyValue,
-                       @"Setting textRotation to a data expression should update text-rotate.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textRotation, pedanticFunctionExpression,
-                              @"textRotation should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textRotation = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextRotate(), propertyValue,
-                       @"Setting textRotation to a camera-data expression should update text-rotate.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textRotation, pedanticFunctionExpression,
-                              @"textRotation should round-trip camera-data expressions.");
 
         layer.textRotation = nil;
         XCTAssertTrue(rawLayer->getTextRotate().isUndefined(),
                       @"Unsetting textRotation should return text-rotate to the default value.");
         XCTAssertEqualObjects(layer.textRotation, defaultExpression,
                               @"textRotation should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textRotation = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textRotation = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // text-rotation-alignment
@@ -1695,7 +1579,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"'lowercase'"];
         layer.textTransform = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::style::TextTransformType> propertyValue = { mbgl::style::TextTransformType::Lowercase };
+        mbgl::style::PropertyValue<mbgl::style::TextTransformType> propertyValue = { mbgl::style::TextTransformType::Lowercase };
         XCTAssertEqual(rawLayer->getTextTransform(), propertyValue,
                        @"Setting textTransform to a constant value expression should update text-transform.");
         XCTAssertEqualObjects(layer.textTransform, constantExpression,
@@ -1722,6 +1606,12 @@
                       @"Unsetting textTransform should return text-transform to the default value.");
         XCTAssertEqualObjects(layer.textTransform, defaultExpression,
                               @"textTransform should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textTransform = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textTransform = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 
     // icon-color
@@ -1732,7 +1622,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
         layer.iconColor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
         XCTAssertEqual(rawLayer->getIconColor(), propertyValue,
                        @"Setting iconColor to a constant value expression should update icon-color.");
         XCTAssertEqualObjects(layer.iconColor, constantExpression,
@@ -1753,37 +1643,18 @@
         XCTAssertEqualObjects(layer.iconColor, functionExpression,
                               @"iconColor should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconColor = functionExpression;
-
-        mbgl::style::ExponentialStops<mbgl::Color> exponentialStops = { {{18, { 1, 0, 0, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<mbgl::Color> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconColor(), propertyValue,
-                       @"Setting iconColor to a data expression should update icon-color.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconColor, pedanticFunctionExpression,
-                              @"iconColor should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconColor = functionExpression;
-
-        std::map<float, mbgl::Color> innerStops { {18, { 1, 0, 0, 1 }} };
-        mbgl::style::CompositeExponentialStops<mbgl::Color> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<mbgl::Color> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconColor(), propertyValue,
-                       @"Setting iconColor to a camera-data expression should update icon-color.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconColor, pedanticFunctionExpression,
-                              @"iconColor should round-trip camera-data expressions.");
 
         layer.iconColor = nil;
         XCTAssertTrue(rawLayer->getIconColor().isUndefined(),
                       @"Unsetting iconColor should return icon-color to the default value.");
         XCTAssertEqualObjects(layer.iconColor, defaultExpression,
                               @"iconColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.iconColorTransition = transitionTest;
         auto toptions = rawLayer->getIconColorTransition();
@@ -1803,7 +1674,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.iconHaloBlur = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getIconHaloBlur(), propertyValue,
                        @"Setting iconHaloBlur to a constant value expression should update icon-halo-blur.");
         XCTAssertEqualObjects(layer.iconHaloBlur, constantExpression,
@@ -1824,37 +1695,18 @@
         XCTAssertEqualObjects(layer.iconHaloBlur, functionExpression,
                               @"iconHaloBlur should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconHaloBlur = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloBlur(), propertyValue,
-                       @"Setting iconHaloBlur to a data expression should update icon-halo-blur.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconHaloBlur, pedanticFunctionExpression,
-                              @"iconHaloBlur should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconHaloBlur = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloBlur(), propertyValue,
-                       @"Setting iconHaloBlur to a camera-data expression should update icon-halo-blur.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconHaloBlur, pedanticFunctionExpression,
-                              @"iconHaloBlur should round-trip camera-data expressions.");
 
         layer.iconHaloBlur = nil;
         XCTAssertTrue(rawLayer->getIconHaloBlur().isUndefined(),
                       @"Unsetting iconHaloBlur should return icon-halo-blur to the default value.");
         XCTAssertEqualObjects(layer.iconHaloBlur, defaultExpression,
                               @"iconHaloBlur should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.iconHaloBlurTransition = transitionTest;
         auto toptions = rawLayer->getIconHaloBlurTransition();
@@ -1874,7 +1726,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
         layer.iconHaloColor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
         XCTAssertEqual(rawLayer->getIconHaloColor(), propertyValue,
                        @"Setting iconHaloColor to a constant value expression should update icon-halo-color.");
         XCTAssertEqualObjects(layer.iconHaloColor, constantExpression,
@@ -1895,37 +1747,18 @@
         XCTAssertEqualObjects(layer.iconHaloColor, functionExpression,
                               @"iconHaloColor should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconHaloColor = functionExpression;
-
-        mbgl::style::ExponentialStops<mbgl::Color> exponentialStops = { {{18, { 1, 0, 0, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<mbgl::Color> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloColor(), propertyValue,
-                       @"Setting iconHaloColor to a data expression should update icon-halo-color.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconHaloColor, pedanticFunctionExpression,
-                              @"iconHaloColor should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconHaloColor = functionExpression;
-
-        std::map<float, mbgl::Color> innerStops { {18, { 1, 0, 0, 1 }} };
-        mbgl::style::CompositeExponentialStops<mbgl::Color> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<mbgl::Color> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloColor(), propertyValue,
-                       @"Setting iconHaloColor to a camera-data expression should update icon-halo-color.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconHaloColor, pedanticFunctionExpression,
-                              @"iconHaloColor should round-trip camera-data expressions.");
 
         layer.iconHaloColor = nil;
         XCTAssertTrue(rawLayer->getIconHaloColor().isUndefined(),
                       @"Unsetting iconHaloColor should return icon-halo-color to the default value.");
         XCTAssertEqualObjects(layer.iconHaloColor, defaultExpression,
                               @"iconHaloColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.iconHaloColorTransition = transitionTest;
         auto toptions = rawLayer->getIconHaloColorTransition();
@@ -1945,7 +1778,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.iconHaloWidth = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getIconHaloWidth(), propertyValue,
                        @"Setting iconHaloWidth to a constant value expression should update icon-halo-width.");
         XCTAssertEqualObjects(layer.iconHaloWidth, constantExpression,
@@ -1966,37 +1799,18 @@
         XCTAssertEqualObjects(layer.iconHaloWidth, functionExpression,
                               @"iconHaloWidth should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconHaloWidth = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloWidth(), propertyValue,
-                       @"Setting iconHaloWidth to a data expression should update icon-halo-width.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconHaloWidth, pedanticFunctionExpression,
-                              @"iconHaloWidth should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconHaloWidth = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconHaloWidth(), propertyValue,
-                       @"Setting iconHaloWidth to a camera-data expression should update icon-halo-width.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconHaloWidth, pedanticFunctionExpression,
-                              @"iconHaloWidth should round-trip camera-data expressions.");
 
         layer.iconHaloWidth = nil;
         XCTAssertTrue(rawLayer->getIconHaloWidth().isUndefined(),
                       @"Unsetting iconHaloWidth should return icon-halo-width to the default value.");
         XCTAssertEqualObjects(layer.iconHaloWidth, defaultExpression,
                               @"iconHaloWidth should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconHaloWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.iconHaloWidthTransition = transitionTest;
         auto toptions = rawLayer->getIconHaloWidthTransition();
@@ -2016,7 +1830,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.iconOpacity = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getIconOpacity(), propertyValue,
                        @"Setting iconOpacity to a constant value expression should update icon-opacity.");
         XCTAssertEqualObjects(layer.iconOpacity, constantExpression,
@@ -2037,37 +1851,18 @@
         XCTAssertEqualObjects(layer.iconOpacity, functionExpression,
                               @"iconOpacity should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.iconOpacity = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getIconOpacity(), propertyValue,
-                       @"Setting iconOpacity to a data expression should update icon-opacity.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.iconOpacity, pedanticFunctionExpression,
-                              @"iconOpacity should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.iconOpacity = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getIconOpacity(), propertyValue,
-                       @"Setting iconOpacity to a camera-data expression should update icon-opacity.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.iconOpacity, pedanticFunctionExpression,
-                              @"iconOpacity should round-trip camera-data expressions.");
 
         layer.iconOpacity = nil;
         XCTAssertTrue(rawLayer->getIconOpacity().isUndefined(),
                       @"Unsetting iconOpacity should return icon-opacity to the default value.");
         XCTAssertEqualObjects(layer.iconOpacity, defaultExpression,
                               @"iconOpacity should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.iconOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.iconOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.iconOpacityTransition = transitionTest;
         auto toptions = rawLayer->getIconOpacityTransition();
@@ -2179,7 +1974,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
         layer.textColor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
         XCTAssertEqual(rawLayer->getTextColor(), propertyValue,
                        @"Setting textColor to a constant value expression should update text-color.");
         XCTAssertEqualObjects(layer.textColor, constantExpression,
@@ -2200,37 +1995,18 @@
         XCTAssertEqualObjects(layer.textColor, functionExpression,
                               @"textColor should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textColor = functionExpression;
-
-        mbgl::style::ExponentialStops<mbgl::Color> exponentialStops = { {{18, { 1, 0, 0, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<mbgl::Color> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextColor(), propertyValue,
-                       @"Setting textColor to a data expression should update text-color.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textColor, pedanticFunctionExpression,
-                              @"textColor should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textColor = functionExpression;
-
-        std::map<float, mbgl::Color> innerStops { {18, { 1, 0, 0, 1 }} };
-        mbgl::style::CompositeExponentialStops<mbgl::Color> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<mbgl::Color> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextColor(), propertyValue,
-                       @"Setting textColor to a camera-data expression should update text-color.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textColor, pedanticFunctionExpression,
-                              @"textColor should round-trip camera-data expressions.");
 
         layer.textColor = nil;
         XCTAssertTrue(rawLayer->getTextColor().isUndefined(),
                       @"Unsetting textColor should return text-color to the default value.");
         XCTAssertEqualObjects(layer.textColor, defaultExpression,
                               @"textColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.textColorTransition = transitionTest;
         auto toptions = rawLayer->getTextColorTransition();
@@ -2250,7 +2026,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textHaloBlur = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextHaloBlur(), propertyValue,
                        @"Setting textHaloBlur to a constant value expression should update text-halo-blur.");
         XCTAssertEqualObjects(layer.textHaloBlur, constantExpression,
@@ -2271,37 +2047,18 @@
         XCTAssertEqualObjects(layer.textHaloBlur, functionExpression,
                               @"textHaloBlur should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textHaloBlur = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloBlur(), propertyValue,
-                       @"Setting textHaloBlur to a data expression should update text-halo-blur.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textHaloBlur, pedanticFunctionExpression,
-                              @"textHaloBlur should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textHaloBlur = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloBlur(), propertyValue,
-                       @"Setting textHaloBlur to a camera-data expression should update text-halo-blur.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textHaloBlur, pedanticFunctionExpression,
-                              @"textHaloBlur should round-trip camera-data expressions.");
 
         layer.textHaloBlur = nil;
         XCTAssertTrue(rawLayer->getTextHaloBlur().isUndefined(),
                       @"Unsetting textHaloBlur should return text-halo-blur to the default value.");
         XCTAssertEqualObjects(layer.textHaloBlur, defaultExpression,
                               @"textHaloBlur should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textHaloBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textHaloBlur = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.textHaloBlurTransition = transitionTest;
         auto toptions = rawLayer->getTextHaloBlurTransition();
@@ -2321,7 +2078,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
         layer.textHaloColor = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
         XCTAssertEqual(rawLayer->getTextHaloColor(), propertyValue,
                        @"Setting textHaloColor to a constant value expression should update text-halo-color.");
         XCTAssertEqualObjects(layer.textHaloColor, constantExpression,
@@ -2342,37 +2099,18 @@
         XCTAssertEqualObjects(layer.textHaloColor, functionExpression,
                               @"textHaloColor should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textHaloColor = functionExpression;
-
-        mbgl::style::ExponentialStops<mbgl::Color> exponentialStops = { {{18, { 1, 0, 0, 1 }}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<mbgl::Color> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloColor(), propertyValue,
-                       @"Setting textHaloColor to a data expression should update text-halo-color.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textHaloColor, pedanticFunctionExpression,
-                              @"textHaloColor should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textHaloColor = functionExpression;
-
-        std::map<float, mbgl::Color> innerStops { {18, { 1, 0, 0, 1 }} };
-        mbgl::style::CompositeExponentialStops<mbgl::Color> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<mbgl::Color> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloColor(), propertyValue,
-                       @"Setting textHaloColor to a camera-data expression should update text-halo-color.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textHaloColor, pedanticFunctionExpression,
-                              @"textHaloColor should round-trip camera-data expressions.");
 
         layer.textHaloColor = nil;
         XCTAssertTrue(rawLayer->getTextHaloColor().isUndefined(),
                       @"Unsetting textHaloColor should return text-halo-color to the default value.");
         XCTAssertEqualObjects(layer.textHaloColor, defaultExpression,
                               @"textHaloColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textHaloColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textHaloColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.textHaloColorTransition = transitionTest;
         auto toptions = rawLayer->getTextHaloColorTransition();
@@ -2392,7 +2130,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textHaloWidth = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextHaloWidth(), propertyValue,
                        @"Setting textHaloWidth to a constant value expression should update text-halo-width.");
         XCTAssertEqualObjects(layer.textHaloWidth, constantExpression,
@@ -2413,37 +2151,18 @@
         XCTAssertEqualObjects(layer.textHaloWidth, functionExpression,
                               @"textHaloWidth should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textHaloWidth = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloWidth(), propertyValue,
-                       @"Setting textHaloWidth to a data expression should update text-halo-width.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textHaloWidth, pedanticFunctionExpression,
-                              @"textHaloWidth should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textHaloWidth = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextHaloWidth(), propertyValue,
-                       @"Setting textHaloWidth to a camera-data expression should update text-halo-width.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textHaloWidth, pedanticFunctionExpression,
-                              @"textHaloWidth should round-trip camera-data expressions.");
 
         layer.textHaloWidth = nil;
         XCTAssertTrue(rawLayer->getTextHaloWidth().isUndefined(),
                       @"Unsetting textHaloWidth should return text-halo-width to the default value.");
         XCTAssertEqualObjects(layer.textHaloWidth, defaultExpression,
                               @"textHaloWidth should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textHaloWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textHaloWidth = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.textHaloWidthTransition = transitionTest;
         auto toptions = rawLayer->getTextHaloWidthTransition();
@@ -2463,7 +2182,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.textOpacity = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getTextOpacity(), propertyValue,
                        @"Setting textOpacity to a constant value expression should update text-opacity.");
         XCTAssertEqualObjects(layer.textOpacity, constantExpression,
@@ -2484,37 +2203,18 @@
         XCTAssertEqualObjects(layer.textOpacity, functionExpression,
                               @"textOpacity should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.textOpacity = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getTextOpacity(), propertyValue,
-                       @"Setting textOpacity to a data expression should update text-opacity.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.textOpacity, pedanticFunctionExpression,
-                              @"textOpacity should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.textOpacity = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getTextOpacity(), propertyValue,
-                       @"Setting textOpacity to a camera-data expression should update text-opacity.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.textOpacity, pedanticFunctionExpression,
-                              @"textOpacity should round-trip camera-data expressions.");
 
         layer.textOpacity = nil;
         XCTAssertTrue(rawLayer->getTextOpacity().isUndefined(),
                       @"Unsetting textOpacity should return text-opacity to the default value.");
         XCTAssertEqualObjects(layer.textOpacity, defaultExpression,
                               @"textOpacity should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.textOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.textOpacity = functionExpression, NSException, NSInvalidArgumentException, @"MGLSymbolLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.textOpacityTransition = transitionTest;
         auto toptions = rawLayer->getTextOpacityTransition();

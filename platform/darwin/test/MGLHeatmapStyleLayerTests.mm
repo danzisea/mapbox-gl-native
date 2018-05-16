@@ -48,6 +48,49 @@
     MGLTransition transitionTest = MGLTransitionMake(5, 4);
 
 
+    // heatmap-color
+    {
+        XCTAssertTrue(rawLayer->getHeatmapColor().isUndefined(),
+                      @"heatmap-color should be unset initially.");
+        NSExpression *defaultExpression = layer.heatmapColor;
+
+        NSExpression *constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
+        layer.heatmapColor = constantExpression;
+        mbgl::style::PropertyValue<mbgl::Color> propertyValue = { { 1, 0, 0, 1 } };
+        XCTAssertEqual(rawLayer->getHeatmapColor(), propertyValue,
+                       @"Setting heatmapColor to a constant value expression should update heatmap-color.");
+        XCTAssertEqualObjects(layer.heatmapColor, constantExpression,
+                              @"heatmapColor should round-trip constant value expressions.");
+
+        constantExpression = [NSExpression expressionWithFormat:@"%@", [MGLColor redColor]];
+        NSExpression *functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:($zoomLevel, %@, %@)", constantExpression, @{@18: constantExpression}];
+        layer.heatmapColor = functionExpression;
+
+        mbgl::style::IntervalStops<mbgl::Color> intervalStops = {{
+            { -INFINITY, { 1, 0, 0, 1 } },
+            { 18, { 1, 0, 0, 1 } },
+        }};
+        propertyValue = mbgl::style::CameraFunction<mbgl::Color> { intervalStops };
+
+        XCTAssertEqual(rawLayer->getHeatmapColor(), propertyValue,
+                       @"Setting heatmapColor to a camera expression should update heatmap-color.");
+        XCTAssertEqualObjects(layer.heatmapColor, functionExpression,
+                              @"heatmapColor should round-trip camera expressions.");
+
+
+        layer.heatmapColor = nil;
+        XCTAssertTrue(rawLayer->getHeatmapColor().isUndefined(),
+                      @"Unsetting heatmapColor should return heatmap-color to the default value.");
+        XCTAssertEqualObjects(layer.heatmapColor, defaultExpression,
+                              @"heatmapColor should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.heatmapColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.heatmapColor = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+    }
+
     // heatmap-intensity
     {
         XCTAssertTrue(rawLayer->getHeatmapIntensity().isUndefined(),
@@ -160,7 +203,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.heatmapRadius = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getHeatmapRadius(), propertyValue,
                        @"Setting heatmapRadius to a constant value expression should update heatmap-radius.");
         XCTAssertEqualObjects(layer.heatmapRadius, constantExpression,
@@ -181,37 +224,18 @@
         XCTAssertEqualObjects(layer.heatmapRadius, functionExpression,
                               @"heatmapRadius should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.heatmapRadius = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getHeatmapRadius(), propertyValue,
-                       @"Setting heatmapRadius to a data expression should update heatmap-radius.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.heatmapRadius, pedanticFunctionExpression,
-                              @"heatmapRadius should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.heatmapRadius = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getHeatmapRadius(), propertyValue,
-                       @"Setting heatmapRadius to a camera-data expression should update heatmap-radius.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.heatmapRadius, pedanticFunctionExpression,
-                              @"heatmapRadius should round-trip camera-data expressions.");
 
         layer.heatmapRadius = nil;
         XCTAssertTrue(rawLayer->getHeatmapRadius().isUndefined(),
                       @"Unsetting heatmapRadius should return heatmap-radius to the default value.");
         XCTAssertEqualObjects(layer.heatmapRadius, defaultExpression,
                               @"heatmapRadius should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.heatmapRadius = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.heatmapRadius = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
         // Transition property test
         layer.heatmapRadiusTransition = transitionTest;
         auto toptions = rawLayer->getHeatmapRadiusTransition();
@@ -231,7 +255,7 @@
 
         NSExpression *constantExpression = [NSExpression expressionWithFormat:@"0xff"];
         layer.heatmapWeight = constantExpression;
-        mbgl::style::DataDrivenPropertyValue<float> propertyValue = { 0xff };
+        mbgl::style::PropertyValue<float> propertyValue = { 0xff };
         XCTAssertEqual(rawLayer->getHeatmapWeight(), propertyValue,
                        @"Setting heatmapWeight to a constant value expression should update heatmap-weight.");
         XCTAssertEqualObjects(layer.heatmapWeight, constantExpression,
@@ -252,41 +276,23 @@
         XCTAssertEqualObjects(layer.heatmapWeight, functionExpression,
                               @"heatmapWeight should round-trip camera expressions.");
 
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(keyName, 'linear', nil, %@)", @{@18: constantExpression}];
-        layer.heatmapWeight = functionExpression;
-
-        mbgl::style::ExponentialStops<float> exponentialStops = { {{18, 0xff}}, 1.0 };
-        propertyValue = mbgl::style::SourceFunction<float> { "keyName", exponentialStops };
-
-        XCTAssertEqual(rawLayer->getHeatmapWeight(), propertyValue,
-                       @"Setting heatmapWeight to a data expression should update heatmap-weight.");
-        NSExpression *pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:(CAST(keyName, 'NSNumber'), 'linear', nil, %@)", @{@18: constantExpression}];
-        XCTAssertEqualObjects(layer.heatmapWeight, pedanticFunctionExpression,
-                              @"heatmapWeight should round-trip data expressions.");
-
-        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
-        layer.heatmapWeight = functionExpression;
-
-        std::map<float, float> innerStops { {18, 0xff} };
-        mbgl::style::CompositeExponentialStops<float> compositeStops { { {10.0, innerStops} }, 1.0 };
-
-        propertyValue = mbgl::style::CompositeFunction<float> { "keyName", compositeStops };
-
-        XCTAssertEqual(rawLayer->getHeatmapWeight(), propertyValue,
-                       @"Setting heatmapWeight to a camera-data expression should update heatmap-weight.");
-        pedanticFunctionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: pedanticFunctionExpression}];
-        XCTAssertEqualObjects(layer.heatmapWeight, pedanticFunctionExpression,
-                              @"heatmapWeight should round-trip camera-data expressions.");
 
         layer.heatmapWeight = nil;
         XCTAssertTrue(rawLayer->getHeatmapWeight().isUndefined(),
                       @"Unsetting heatmapWeight should return heatmap-weight to the default value.");
         XCTAssertEqualObjects(layer.heatmapWeight, defaultExpression,
                               @"heatmapWeight should return the default value after being unset.");
+
+        functionExpression = [NSExpression expressionForKeyPath:@"bogus"];
+        XCTAssertThrowsSpecificNamed(layer.heatmapWeight = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_step:from:stops:(bogus, %@, %@)", constantExpression, @{@18: constantExpression}];
+        functionExpression = [NSExpression expressionWithFormat:@"mgl_interpolate:withCurveType:parameters:stops:($zoomLevel, 'linear', nil, %@)", @{@10: functionExpression}];
+        XCTAssertThrowsSpecificNamed(layer.heatmapWeight = functionExpression, NSException, NSInvalidArgumentException, @"MGLHeatmapLayer should raise an exception if a camera-data expression is applied to a property that does not support key paths to feature attributes.");
     }
 }
 
 - (void)testPropertyNames {
+    [self testPropertyName:@"heatmap-color" isBoolean:NO];
     [self testPropertyName:@"heatmap-intensity" isBoolean:NO];
     [self testPropertyName:@"heatmap-opacity" isBoolean:NO];
     [self testPropertyName:@"heatmap-radius" isBoolean:NO];

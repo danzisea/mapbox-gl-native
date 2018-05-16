@@ -104,7 +104,7 @@ namespace mbgl {
 - (void)setFillColor:(NSExpression *)fillColor {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<mbgl::Color>>(fillColor);
+    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::PropertyValue<mbgl::Color>>(fillColor);
     self.rawLayer->setFillColor(mbglValue);
 }
 
@@ -139,7 +139,7 @@ namespace mbgl {
 - (void)setFillOpacity:(NSExpression *)fillOpacity {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<float>>(fillOpacity);
+    auto mbglValue = MGLStyleValueTransformer<float, NSNumber *>().toPropertyValue<mbgl::style::PropertyValue<float>>(fillOpacity);
     self.rawLayer->setFillOpacity(mbglValue);
 }
 
@@ -174,7 +174,7 @@ namespace mbgl {
 - (void)setFillOutlineColor:(NSExpression *)fillOutlineColor {
     MGLAssertStyleLayerIsValid();
 
-    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::DataDrivenPropertyValue<mbgl::Color>>(fillOutlineColor);
+    auto mbglValue = MGLStyleValueTransformer<mbgl::Color, MGLColor *>().toPropertyValue<mbgl::style::PropertyValue<mbgl::Color>>(fillOutlineColor);
     self.rawLayer->setFillOutlineColor(mbglValue);
 }
 

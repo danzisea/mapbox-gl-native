@@ -81,10 +81,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$heatmapDensity` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapColor;
 #else
@@ -103,10 +104,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$heatmapDensity` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapColor;
 #endif
@@ -124,10 +126,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapIntensity;
 
@@ -150,10 +153,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable
+ * Step functions applied to the `$zoomLevel` variable
  
- This property does not support applying interpolation or step functions to
- feature attributes.
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapOpacity;
 
@@ -179,8 +183,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapRadius;
 
@@ -205,8 +212,11 @@ MGL_EXPORT
  * Predefined functions, including mathematical and string operators
  * Conditional expressions
  * Variable assignments and references to assigned variables
- * Interpolation and step functions applied to the `$zoomLevel` variable and/or
- feature attributes
+ * Step functions applied to the `$zoomLevel` variable
+ 
+ This property does not support applying interpolation functions to the
+ `$zoomLevel` variable or applying interpolation or step functions to feature
+ attributes.
  */
 @property (nonatomic, null_resettable) NSExpression *heatmapWeight;
 
